@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace SOLID.CQRS
 {
-    public class EntityBuilder<TEntity> : IEntityBuilder<TEntity>
+    public sealed class EntityBuilder<TEntity> : IEntityBuilder<TEntity>
     {
         private readonly IEntitySeed<TEntity> _seed;
         private readonly IEnumerable<IEntityComponent<TEntity>> _components;

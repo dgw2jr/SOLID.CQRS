@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Autofac.Extras.Moq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 
 namespace SOLID.CQRS.Tests
 {
@@ -16,8 +14,9 @@ namespace SOLID.CQRS.Tests
             using (var mock = AutoMock.GetLoose())
             {
                 // Arrange
+                const int expected = 5;
                 mock.Mock<IEntitySeed<IHasCustomerId>>().Setup(m => m.Execute())
-                    .Returns(new IHasCustomerId[5]);
+                    .Returns(new IHasCustomerId[expected]);
 
                 mock.Provide<IEnumerable<IEntityComponent<IHasCustomerId>>>(new List<IEntityComponent<IHasCustomerId>>());
 
@@ -27,7 +26,7 @@ namespace SOLID.CQRS.Tests
                 var result = builder.Build();
 
                 // Assert
-                Assert.AreEqual(5, result.Count());
+                Assert.AreEqual(expected, result.Count());
             }
         }
 
@@ -46,7 +45,7 @@ namespace SOLID.CQRS.Tests
                 mockComponent.Setup(m => m.Execute(mockSeed.Object.Execute()))
                     .Returns(new IHasCustomerId[listCount]);
 
-                mock.Provide<IEnumerable<IEntityComponent<IHasCustomerId>>>(new List<IEntityComponent<IHasCustomerId>> {mockComponent.Object});
+                mock.Provide<IEnumerable<IEntityComponent<IHasCustomerId>>>(new List<IEntityComponent<IHasCustomerId>> { mockComponent.Object });
 
                 var builder = mock.Create<EntityBuilder<IHasCustomerId>>();
 
@@ -61,17 +60,14 @@ namespace SOLID.CQRS.Tests
         [TestMethod]
         public void ShouldReturnEmptyListWhenNotSeeded()
         {
-            using (var mock = AutoMock.GetLoose())
-            {
-                // Arrange
-                var builder = new EntityBuilder<IHasCustomerId>(null, null);
+            // Arrange
+            var builder = new EntityBuilder<IHasCustomerId>(null, null);
 
-                // Act
-                var result = builder.Build();
+            // Act
+            var result = builder.Build();
 
-                // Assert
-                Assert.AreEqual(0, result.Count());
-            }
+            // Assert
+            Assert.AreEqual(0, result.Count());
         }
     }
 }
